@@ -6,6 +6,12 @@ branding:
   icon: 'box'
   color: 'gray-dark'
 
+inputs:
+  prefix:
+    description: 'Value inserted in front of the julia command, e.g. for running xvfb-run julia [...]'
+    default: ''
+    required: false
+
 runs:
   using: 'composite'
   steps:
@@ -25,6 +31,14 @@ runs:
       # the request metadata to pkg.julialang.org when installing
       # packages via `Pkg.test`.
       JULIA_PKG_SERVER: ""
+  - run: |
+        # The Julia command that will be executed
+        julia_cmd=( julia --color=yes --project -e 'using Pkg; if VERSION >= v"1.1.0-rc1"; Pkg.build(verbose=true); else Pkg.build(); end' )
 
-  - run: julia --color=yes --project -e 'using Pkg; if VERSION >= v"1.1.0-rc1"; Pkg.build(verbose=true); else Pkg.build(); end'
+        # Add the prefix in front of the command if there is one
+        prefix="${{ inputs.prefix }}"
+        [[ -n $prefix ]] && julia_cmd=( "$prefix" "${julia_cmd[@]}" )
+
+        # Run the Julia command
+        "${julia_cmd[@]}"
     shell: bash
