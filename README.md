@@ -30,7 +30,7 @@ jobs:
       - uses: julia-actions/setup-julia@latest
         with:
           version: ${{ matrix.julia-version }}
-      - uses: alfredclwong/julia-buildpkg@main
+      - uses: alfredclwong/julia-buildpkg@master
       - uses: julia-actions/julia-runtest@master
 ```
 
@@ -40,7 +40,7 @@ In some packages, you may want to prefix the `julia` command with another comman
 In that case, you can add an input called `prefix` containing the command that will be inserted to your workflow:
 
 ```yaml
-      - uses: alfredclwong/julia-buildpkg@main
+      - uses: alfredclwong/julia-buildpkg@master
         with:
           prefix: xvfb-run
 ```
@@ -59,7 +59,7 @@ If you only want to add this prefix on certain builds, you can [include addition
             prefix: xvfb-run
     steps:
     # ...
-      - uses: alfredclwong/julia-buildpkg@main
+      - uses: alfredclwong/julia-buildpkg@master
         with:
           prefix: ${{ matrix.prefix }}
     # ...
