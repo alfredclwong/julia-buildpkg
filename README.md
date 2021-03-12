@@ -30,6 +30,39 @@ jobs:
       - uses: julia-actions/setup-julia@latest
         with:
           version: ${{ matrix.julia-version }}
-      - uses: julia-actions/julia-buildpkg@master
+      - uses: alfredclwong/julia-buildpkg@main
       - uses: julia-actions/julia-runtest@master
 ```
+
+### Prefixing the Julia command
+
+In some packages, you may want to prefix the `julia` command with another command, e.g. for running tests of certain graphical libraries with `xvfb-run`.
+In that case, you can add an input called `prefix` containing the command that will be inserted to your workflow:
+
+```yaml
+      - uses: alfredclwong/julia-buildpkg@main
+        with:
+          prefix: xvfb-run
+```
+
+If you only want to add this prefix on certain builds, you can [include additional values into a combination](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#example-including-additional-values-into-combinations) of your build matrix, e.g.:
+
+```yaml
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        version: ['1.0', '1', 'nightly']
+        arch: [x64]
+        include:
+          - os: ubuntu-latest
+            prefix: xvfb-run
+    steps:
+    # ...
+      - uses: alfredclwong/julia-buildpkg@main
+        with:
+          prefix: ${{ matrix.prefix }}
+    # ...
+```
+
+This will add the prefix `xvfb-run` to all builds where the `os` is `ubuntu-latest`.
